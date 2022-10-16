@@ -1,4 +1,4 @@
-# World cleaner
+# Unused chunk remover
 
 A tool that allows you to remove the untouched regions in your world to make your world ready for the next Minecraft update or to optimize your survival world for uploading online.
 
