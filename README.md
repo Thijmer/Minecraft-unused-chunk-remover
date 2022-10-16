@@ -6,7 +6,7 @@ A tool that allows you to remove the untouched regions in your world to make you
 **Because Ledger only works on servers and not in single player, this script does not work for single player worlds.**
 
 ## How it works
-The [Ledger](https://modrinth.com/mod/ledger) mod is a block logging tool developed by Quilt Server Tools (NOT ME). It logs all changes to blocks to make it easier to track down grievers and rollback their damage. Because it logs everything, *this* program can use its data to find out if someone has built (or destroyed) something in a region file and remove it if it hasn't been touched. This way, it can be regenerated the next time it is loaded, allowing Minecraft features from the latest version to generate.  
+[Ledger](https://modrinth.com/mod/ledger) is a block logging tool developed by Quilt Server Tools (not me). It logs all changes to blocks to make it easier to track down grievers and rollback their damage. Because it logs everything, *this* program can use its logs to find out if someone has built (or destroyed) something in a region file and remove it if it hasn't been touched. This way, it can be regenerated the next time it is loaded, allowing Minecraft features from the latest version to generate.  
 This script does not remove single chunks, but rather 512*512 block .mca files.
 
 ## How to use it
