@@ -5,24 +5,55 @@
 # License: GPLv3
 
 #Imports
+from gettext import install
+from secrets import choice
 import sqlite3
 import os
 import math
 
-def smart_chunk_remover(sql_path, region_path, world=1):
+def mtpChoice(question: str, options_amount: int) -> int:
+    print(question)
+    while True:
+        choice = input("Choose option [1-%s]: " % options_amount)
+        if choice.isnumeric():
+            choice_as_number = int(choice)
+            if options_amount >= choice_as_number >= 1:
+                return choice_as_number
+            else:
+                print("Please chooce an option between 1 and %s." % options_amount)
+        else:
+            print("The answer needs to be a number!")
+    
+
+def smart_chunk_remover(sql_path: str, region_path: str, world:int=None):
     """
     This is the main function. It calls the functions to index and remove the chunks.
     """
     # Connect to the Ledger database in order to read it
     con = sqlite3.connect(sql_path)
 
+    # Ask which world needs to be cleaned. This part is placed here instead of the if __name__... statement because there was no SQL connection yet there.
+    if world == None:
+        world = ask_world(con)
+        print("Processing...")
+
     # Find blocks changed by player activity. The chunks with these blocks in them can be kept.
     changed_coordinates = read_coordinates(con, world)
-    
+    # Chunks to remove = all chunks - chunks to keep
     regions_to_keep = coords_to_chunks(changed_coordinates)
     regions_to_remove = calculate_regions_to_remove(region_path, regions_to_keep)
     remove_regions(region_path, regions_to_remove)
-    
+
+
+def ask_world(con: sqlite3.Connection) -> int:
+    cur: sqlite3.Cursor = con.cursor()
+    dimensions: list[str] = [dim[0] for dim in con.execute("SELECT identifier FROM worlds").fetchall()]
+    question = "Which dimension is the given region directory from?"
+    id: int = 1
+    for dim in dimensions:
+        question += "\n%s: %s" % (id, dim)
+        id += 1
+    return mtpChoice(question, len(dimensions))
 
 def read_coordinates(con, world) -> 'list[tuple[str]]':
     """
@@ -121,6 +152,7 @@ if __name__ == "__main__":
                 print("'%s' has to be a directory." % region_path)
         else:
             print("'%s': No such file or directory" % region_path)
-    
+
     # Now we can finally run the program!
     smart_chunk_remover(sql_path, region_path)
+    print("Done!")
